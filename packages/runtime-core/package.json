@@ -1,5 +1,5 @@
 {
-  "name": "@vue/runtime-core",
+  "name": "@cabloy/vue-runtime-core",
   "version": "3.4.23",
   "description": "@vue/runtime-core",
   "main": "index.js",
