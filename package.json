@@ -1,7 +1,6 @@
 {
   "private": true,
   "version": "3.4.23",
-  "packageManager": "pnpm@9.0.1",
   "type": "module",
   "scripts": {
     "dev": "node scripts/dev.js",
