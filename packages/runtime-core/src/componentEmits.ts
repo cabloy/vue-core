@@ -102,10 +102,12 @@ export function emit(
         )
       ) {
         if (!propsOptions || !(toHandlerKey(event) in propsOptions)) {
-          warn(
-            `Component emitted event "${event}" but it is neither declared in ` +
-              `the emits option nor as an "${toHandlerKey(event)}" prop.`,
-          )
+          if (event !== 'controllerRef') {
+            warn(
+              `Component emitted event "${event}" but it is neither declared in ` +
+                `the emits option nor as an "${toHandlerKey(event)}" prop.`,
+            )
+          }
         }
       } else {
         const validator = emitsOptions[event]
