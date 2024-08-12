@@ -1331,10 +1331,10 @@ function baseCreateRenderer(
           } else {
             const zova = (<any>instance.ctx._).zova
             if (zova) {
-              zova.meta.ssr.increase()
+              zova.meta.ssr._hydratingInc()
               zova.meta.state.inited.wait().then(() => {
                 !instance.isUnmounted && hydrateSubTree()
-                zova.meta.ssr.decrease()
+                zova.meta.ssr._hydratingDec()
               })
             } else {
               hydrateSubTree()
