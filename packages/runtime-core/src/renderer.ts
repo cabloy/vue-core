@@ -1329,7 +1329,16 @@ function baseCreateRenderer(
               () => !instance.isUnmounted && hydrateSubTree(),
             )
           } else {
-            hydrateSubTree()
+            const zova = (<any>instance.ctx._).zova
+            if (zova) {
+              zova.meta.ssr.increase()
+              zova.meta.state.inited.wait().then(() => {
+                !instance.isUnmounted && hydrateSubTree()
+                zova.meta.ssr.decrease()
+              })
+            } else {
+              hydrateSubTree()
+            }
           }
         } else {
           if (__DEV__) {
@@ -1411,6 +1420,11 @@ function baseCreateRenderer(
         initialVNode = container = anchor = null as any
       } else {
         let { next, bu, u, parent, vnode } = instance
+
+        const zova = (<any>instance.ctx._).zova
+        if (zova && zova.meta.ssr.isRuntimeSsrPreHydration) {
+          return
+        }
 
         if (__FEATURE_SUSPENSE__) {
           const nonHydratedAsyncRoot = locateNonHydratedAsyncRoot(instance)
