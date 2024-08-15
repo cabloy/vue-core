@@ -739,6 +739,13 @@ export function createHydrationFunctions(
   return [hydrate, hydrateNode] as const
 }
 
+function _getValidZova(instance: ComponentInternalInstance | null) {
+  while (instance) {
+    if ((<any>instance).zova) return (<any>instance).zova
+    instance = instance.parent
+  }
+}
+
 /**
  * Dev only
  */
@@ -753,7 +760,7 @@ function propHasMismatch(
   let mismatchKey: string | undefined
   let actual: string | boolean | null | undefined
   let expected: string | boolean | null | undefined
-  const zova = instance && (<any>instance.ctx._).zova
+  const zova = _getValidZova(instance)
   if (zova) {
     clientValue = zova.meta.ssr._hydratePropHasMismatch(
       el,

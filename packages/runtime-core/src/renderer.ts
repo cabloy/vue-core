@@ -1329,7 +1329,7 @@ function baseCreateRenderer(
               () => !instance.isUnmounted && hydrateSubTree(),
             )
           } else {
-            const zova = (<any>instance.ctx._).zova
+            const zova = (<any>instance).zova
             if (zova) {
               zova.meta.ssr._hydratingInc()
               zova.meta.state.inited.wait().then(() => {
@@ -1421,7 +1421,7 @@ function baseCreateRenderer(
       } else {
         let { next, bu, u, parent, vnode } = instance
 
-        const zova = (<any>instance.ctx._).zova
+        const zova = (<any>instance).zova
         if (zova && zova.meta.ssr.isRuntimeSsrPreHydration) {
           return
         }
