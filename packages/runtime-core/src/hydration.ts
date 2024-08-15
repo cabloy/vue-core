@@ -346,6 +346,13 @@ export function createHydrationFunctions(
     return nextNode
   }
 
+  function _getValidZova(instance: ComponentInternalInstance | null) {
+    while (instance) {
+      if ((<any>instance).zova) return (<any>instance).zova
+      instance = instance.parent
+    }
+  }
+
   const hydrateElement = (
     el: Element,
     vnode: VNode,
@@ -450,14 +457,33 @@ export function createHydrationFunctions(
           const isCustomElement = el.tagName.includes('-')
           for (const key in props) {
             // check hydration mismatch
-            if (
-              (__DEV__ || __FEATURE_PROD_HYDRATION_MISMATCH_DETAILS__) &&
-              // #11189 skip if this node has directives that have created hooks
-              // as it could have mutated the DOM in any possible way
-              !(dirs && dirs.some(d => d.dir.created)) &&
-              propHasMismatch(el, key, props[key], vnode, parentComponent)
-            ) {
-              logMismatchError()
+            let ignore
+            let clientValue = props[key]
+            const zova = _getValidZova(parentComponent)
+            if (zova) {
+              const res = zova.meta.ssr._hydratePropHasMismatch(
+                el,
+                key,
+                clientValue,
+                vnode,
+                parentComponent,
+              )
+              if (res.ignore) {
+                ignore = true
+              } else {
+                clientValue = res.clientValue
+              }
+            }
+            if (!ignore) {
+              if (
+                (__DEV__ || __FEATURE_PROD_HYDRATION_MISMATCH_DETAILS__) &&
+                // #11189 skip if this node has directives that have created hooks
+                // as it could have mutated the DOM in any possible way
+                !(dirs && dirs.some(d => d.dir.created)) &&
+                propHasMismatch(el, key, clientValue, vnode, parentComponent)
+              ) {
+                logMismatchError()
+              }
             }
             if (
               (forcePatch &&
@@ -739,13 +765,6 @@ export function createHydrationFunctions(
   return [hydrate, hydrateNode] as const
 }
 
-function _getValidZova(instance: ComponentInternalInstance | null) {
-  while (instance) {
-    if ((<any>instance).zova) return (<any>instance).zova
-    instance = instance.parent
-  }
-}
-
 /**
  * Dev only
  */
@@ -760,18 +779,7 @@ function propHasMismatch(
   let mismatchKey: string | undefined
   let actual: string | boolean | null | undefined
   let expected: string | boolean | null | undefined
-  const zova = _getValidZova(instance)
-  if (zova) {
-    const res = zova.meta.ssr._hydratePropHasMismatch(
-      el,
-      key,
-      clientValue,
-      vnode,
-      instance,
-    )
-    if (res.ignore) return false
-    clientValue = res.clientValue
-  }
+
   if (key === 'class') {
     // classes might be in different order, but that doesn't affect cascade
     // so we just need to check if the class lists contain the same classes.
