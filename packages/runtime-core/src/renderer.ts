@@ -1425,6 +1425,9 @@ function baseCreateRenderer(
         if (zova && zova.meta.ssr.isRuntimeSsrPreHydration) {
           return
         }
+        if (!instance.subTree) {
+          return
+        }
 
         if (__FEATURE_SUSPENSE__) {
           const nonHydratedAsyncRoot = locateNonHydratedAsyncRoot(instance)
