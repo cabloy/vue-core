@@ -762,13 +762,15 @@ function propHasMismatch(
   let expected: string | boolean | null | undefined
   const zova = _getValidZova(instance)
   if (zova) {
-    clientValue = zova.meta.ssr._hydratePropHasMismatch(
+    const res = zova.meta.ssr._hydratePropHasMismatch(
       el,
       key,
       clientValue,
       vnode,
       instance,
     )
+    if (res.ignore) return false
+    clientValue = res.clientValue
   }
   if (key === 'class') {
     // classes might be in different order, but that doesn't affect cascade
