@@ -753,6 +753,16 @@ function propHasMismatch(
   let mismatchKey: string | undefined
   let actual: string | boolean | null | undefined
   let expected: string | boolean | null | undefined
+  const zova = instance && (<any>instance.ctx._).zova
+  if (zova) {
+    clientValue = zova.meta.ssr._hydratePropHasMismatch(
+      el,
+      key,
+      clientValue,
+      vnode,
+      instance,
+    )
+  }
   if (key === 'class') {
     // classes might be in different order, but that doesn't affect cascade
     // so we just need to check if the class lists contain the same classes.
