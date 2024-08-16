@@ -1302,7 +1302,10 @@ function baseCreateRenderer(
         }
         toggleRecurse(instance, true)
 
-        if (el && hydrateNode) {
+        const _zova = _getValidZova(instance)
+        const _maybeAllowHydrate =
+          !_zova || _zova.meta.ssr.isRuntimeSsrPreHydration
+        if (el && hydrateNode && _maybeAllowHydrate) {
           // vnode has adopted host node - perform hydration instead of mount.
           const hydrateSubTree = () => {
             if (__DEV__) {
