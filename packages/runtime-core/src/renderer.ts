@@ -1259,6 +1259,13 @@ function baseCreateRenderer(
     }
   }
 
+  function _getValidZova(instance: ComponentInternalInstance | null) {
+    while (instance) {
+      if ((<any>instance).zova) return (<any>instance).zova
+      instance = instance.parent
+    }
+  }
+
   const setupRenderEffect: SetupRenderEffectFn = (
     instance,
     initialVNode,
@@ -1560,6 +1567,14 @@ function baseCreateRenderer(
 
     const update: SchedulerJob = (instance.update = () => {
       if (effect.dirty) {
+        const zova = _getValidZova(instance)
+        if (
+          zova &&
+          zova.meta.ssr.isRuntimeSsrPreHydration &&
+          !zova.meta.ssr._hydratingInstanceRecord(instance)
+        ) {
+          return
+        }
         effect.run()
       }
     })
