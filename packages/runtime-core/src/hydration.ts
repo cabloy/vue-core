@@ -166,16 +166,22 @@ export function createHydrationFunctions(
           }
         } else {
           if ((node as Text).data !== vnode.children) {
-            ;(__DEV__ || __FEATURE_PROD_HYDRATION_MISMATCH_DETAILS__) &&
-              warn(
-                `Hydration text mismatch in`,
-                node.parentNode,
-                `\n  - rendered on server: ${JSON.stringify(
-                  (node as Text).data,
-                )}` +
-                  `\n  - expected on client: ${JSON.stringify(vnode.children)}`,
-              )
-            logMismatchError()
+            if (
+              (<any>node).parentNode.getAttribute(
+                'data-hydrate-ignore-text',
+              ) === null
+            ) {
+              ;(__DEV__ || __FEATURE_PROD_HYDRATION_MISMATCH_DETAILS__) &&
+                warn(
+                  `Hydration text mismatch in`,
+                  node.parentNode,
+                  `\n  - rendered on server: ${JSON.stringify(
+                    (node as Text).data,
+                  )}` +
+                    `\n  - expected on client: ${JSON.stringify(vnode.children)}`,
+                )
+              logMismatchError()
+            }
             ;(node as Text).data = vnode.children as string
           }
           nextNode = nextSibling(node)
