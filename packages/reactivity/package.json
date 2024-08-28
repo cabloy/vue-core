@@ -1,6 +1,6 @@
 {
   "name": "@cabloy/vue-reactivity",
-  "version": "3.4.47",
+  "version": "3.4.48",
   "description": "@vue/reactivity",
   "main": "index.js",
   "module": "dist/reactivity.esm-bundler.js",
