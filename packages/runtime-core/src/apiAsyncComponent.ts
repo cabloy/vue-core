@@ -42,6 +42,13 @@ export interface AsyncComponentOptions<T = any> {
 export const isAsyncWrapper = (i: ComponentInternalInstance | VNode): boolean =>
   !!(i.type as ComponentOptions).__asyncLoader
 
+function _getValidZova(instance: ComponentInternalInstance | null) {
+  while (instance) {
+    if ((<any>instance).zova) return (<any>instance).zova
+    instance = instance.parent
+  }
+}
+
 /*! #__NO_SIDE_EFFECTS__ */
 export function defineAsyncComponent<
   T extends Component = { new (): ComponentPublicInstance },
@@ -134,7 +141,12 @@ export function defineAsyncComponent<
       if (resolvedComp) {
         doHydrate()
       } else {
-        load().then(() => !instance.isUnmounted && doHydrate())
+        const zova = _getValidZova(instance)
+        zova.meta.ssr._hydratingInc()
+        load().then(() => {
+          !instance.isUnmounted && doHydrate()
+          zova.meta.ssr._hydratingDec()
+        })
       }
     },
 
