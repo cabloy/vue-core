@@ -99,11 +99,14 @@ const normalizeSlot = (
       currentInstance &&
       (!ctx || ctx.root === currentInstance.root)
     ) {
-      warn(
-        `Slot "${key}" invoked outside of the render function: ` +
-          `this will not track dependencies used in the slot. ` +
-          `Invoke the slot function inside the render function instead.`,
-      )
+      // eslint-disable-next-line
+      if (typeof window !== 'undefined') {
+        warn(
+          `Slot "${key}" invoked outside of the render function: ` +
+            `this will not track dependencies used in the slot. ` +
+            `Invoke the slot function inside the render function instead.`,
+        )
+      }
     }
     return normalizeSlotValue(rawSlot(...args))
   }, ctx) as Slot
