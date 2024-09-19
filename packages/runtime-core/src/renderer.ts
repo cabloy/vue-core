@@ -1584,9 +1584,8 @@ function baseCreateRenderer(
     const effect = (instance.effect = new ReactiveEffect(componentUpdateFn))
     instance.scope.off()
 
-    const update = (instance.update = effect.run.bind(effect))
-    const job: SchedulerJob = (instance.job = () => {
-      if (effect.dirty) {
+    function _patchUpdate(checkDirty: boolean) {
+      if (!checkDirty || effect.dirty) {
         const zova = _getValidZova(instance)
         if (
           zova &&
@@ -1597,7 +1596,10 @@ function baseCreateRenderer(
         }
         effect.run()
       }
-    })
+    }
+
+    const update = (instance.update = () => _patchUpdate(false))
+    const job: SchedulerJob = (instance.job = () => _patchUpdate(true))
     job.i = instance
     job.id = instance.uid
     effect.scheduler = () => queueJob(job)
