@@ -19,9 +19,9 @@ import { type HydrationStrategy, forEachElement } from './hydrationStrategies'
 
 export type AsyncComponentResolveResult<T = Component> = T | { default: T } // es modules
 
-export type AsyncComponentLoader<T = any> = (
-  attrs?: Record<string, unknown>,
-) => Promise<AsyncComponentResolveResult<T>>
+export type AsyncComponentLoader<T = any> = () => Promise<
+  AsyncComponentResolveResult<T>
+>
 
 export interface AsyncComponentOptions<T = any> {
   loader: AsyncComponentLoader<T>
@@ -61,8 +61,6 @@ export function defineAsyncComponent<
     onError: userOnError,
   } = source
 
-  let instanceAttrs: Record<string, unknown> | undefined = undefined
-
   let pendingRequest: Promise<ConcreteComponent> | null = null
   let resolvedComp: ConcreteComponent | undefined
 
@@ -70,18 +68,15 @@ export function defineAsyncComponent<
   const retry = () => {
     retries++
     pendingRequest = null
-    return load(instanceAttrs)
+    return load()
   }
 
-  const load = (
-    attrs?: Record<string, unknown>,
-  ): Promise<ConcreteComponent> => {
-    instanceAttrs = attrs
+  const load = (): Promise<ConcreteComponent> => {
     let thisRequest: Promise<ConcreteComponent>
     return (
       pendingRequest ||
       (thisRequest = pendingRequest =
-        loader(attrs)
+        loader()
           .catch(err => {
             err = err instanceof Error ? err : new Error(String(err))
             if (userOnError) {
@@ -139,7 +134,7 @@ export function defineAsyncComponent<
       if (resolvedComp) {
         doHydrate()
       } else {
-        load(instance.attrs).then(() => !instance.isUnmounted && doHydrate())
+        load().then(() => !instance.isUnmounted && doHydrate())
       }
     },
 
@@ -171,7 +166,7 @@ export function defineAsyncComponent<
         (__FEATURE_SUSPENSE__ && suspensible && instance.suspense) ||
         (__SSR__ && isInSSRComponentSetup)
       ) {
-        return load(instance.attrs)
+        return load()
           .then(comp => {
             return () => createInnerComp(comp, instance)
           })
@@ -208,7 +203,7 @@ export function defineAsyncComponent<
         }, timeout)
       }
 
-      load(instance.attrs)
+      load()
         .then(() => {
           loaded.value = true
           if (instance.parent && isKeepAlive(instance.parent.vnode)) {
