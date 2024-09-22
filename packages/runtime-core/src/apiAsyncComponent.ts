@@ -19,9 +19,9 @@ import { type HydrationStrategy, forEachElement } from './hydrationStrategies'
 
 export type AsyncComponentResolveResult<T = Component> = T | { default: T } // es modules
 
-export type AsyncComponentLoader<T = any> = () => Promise<
-  AsyncComponentResolveResult<T>
->
+export type AsyncComponentLoader<T = any> = (
+  attrs?: Record<string, unknown>,
+) => Promise<AsyncComponentResolveResult<T>>
 
 export interface AsyncComponentOptions<T = any> {
   loader: AsyncComponentLoader<T>
@@ -61,7 +61,7 @@ export function defineAsyncComponent<
     onError: userOnError,
   } = source
 
-  let thisAttrs: Record<string, unknown> | undefined = undefined
+  let instanceAttrs: Record<string, unknown> | undefined = undefined
 
   let pendingRequest: Promise<ConcreteComponent> | null = null
   let resolvedComp: ConcreteComponent | undefined
@@ -70,18 +70,18 @@ export function defineAsyncComponent<
   const retry = () => {
     retries++
     pendingRequest = null
-    return load()
+    return load(instanceAttrs)
   }
 
   const load = (
     attrs?: Record<string, unknown>,
   ): Promise<ConcreteComponent> => {
-    thisAttrs = thisAttrs || attrs
+    instanceAttrs = attrs
     let thisRequest: Promise<ConcreteComponent>
     return (
       pendingRequest ||
       (thisRequest = pendingRequest =
-        loader()
+        loader(attrs)
           .catch(err => {
             err = err instanceof Error ? err : new Error(String(err))
             if (userOnError) {
