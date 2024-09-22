@@ -61,6 +61,8 @@ export function defineAsyncComponent<
     onError: userOnError,
   } = source
 
+  let thisAttrs: Record<string, unknown> | undefined = undefined
+
   let pendingRequest: Promise<ConcreteComponent> | null = null
   let resolvedComp: ConcreteComponent | undefined
 
@@ -71,7 +73,10 @@ export function defineAsyncComponent<
     return load()
   }
 
-  const load = (): Promise<ConcreteComponent> => {
+  const load = (
+    attrs?: Record<string, unknown>,
+  ): Promise<ConcreteComponent> => {
+    thisAttrs = thisAttrs || attrs
     let thisRequest: Promise<ConcreteComponent>
     return (
       pendingRequest ||
@@ -134,7 +139,7 @@ export function defineAsyncComponent<
       if (resolvedComp) {
         doHydrate()
       } else {
-        load().then(() => !instance.isUnmounted && doHydrate())
+        load(instance.attrs).then(() => !instance.isUnmounted && doHydrate())
       }
     },
 
@@ -166,7 +171,7 @@ export function defineAsyncComponent<
         (__FEATURE_SUSPENSE__ && suspensible && instance.suspense) ||
         (__SSR__ && isInSSRComponentSetup)
       ) {
-        return load()
+        return load(instance.attrs)
           .then(comp => {
             return () => createInnerComp(comp, instance)
           })
@@ -203,7 +208,7 @@ export function defineAsyncComponent<
         }, timeout)
       }
 
-      load()
+      load(instance.attrs)
         .then(() => {
           loaded.value = true
           if (instance.parent && isKeepAlive(instance.parent.vnode)) {
