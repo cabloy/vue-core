@@ -76,6 +76,9 @@ const createHook =
     ) {
       injectHook(lifecycle, (...args: unknown[]) => hook(...args), target)
     }
+    if (lifecycle === 'm' && target && target.isMounted) {
+      hook()
+    }
   }
 type CreateHook<T = any> = (
   hook: T,

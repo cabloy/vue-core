@@ -1272,6 +1272,13 @@ function baseCreateRenderer(
     }
   }
 
+  function _getValidZova(instance: ComponentInternalInstance | null) {
+    while (instance) {
+      if ((<any>instance).zova) return (<any>instance).zova
+      instance = instance.parent
+    }
+  }
+
   const setupRenderEffect: SetupRenderEffectFn = (
     instance,
     initialVNode,
@@ -1308,7 +1315,10 @@ function baseCreateRenderer(
         }
         toggleRecurse(instance, true)
 
-        if (el && hydrateNode) {
+        const _zova = _getValidZova(instance)
+        const _maybeAllowHydrate =
+          !_zova || _zova.meta.ssr.isRuntimeSsrPreHydration
+        if (el && hydrateNode && _maybeAllowHydrate) {
           // vnode has adopted host node - perform hydration instead of mount.
           const hydrateSubTree = () => {
             if (__DEV__) {
@@ -1343,7 +1353,16 @@ function baseCreateRenderer(
               hydrateSubTree,
             )
           } else {
-            hydrateSubTree()
+            const zova = (<any>instance).zova
+            if (zova) {
+              zova.meta.ssr._hydratingInc()
+              zova.meta.state.inited.wait().then(() => {
+                !instance.isUnmounted && hydrateSubTree()
+                zova.meta.ssr._hydratingDec()
+              })
+            } else {
+              hydrateSubTree()
+            }
           }
         } else {
           // custom element style injection
@@ -1430,6 +1449,14 @@ function baseCreateRenderer(
         initialVNode = container = anchor = null as any
       } else {
         let { next, bu, u, parent, vnode } = instance
+
+        const zova = (<any>instance).zova
+        if (zova && zova.meta.ssr.isRuntimeSsrPreHydration) {
+          return
+        }
+        if (!instance.subTree) {
+          return
+        }
 
         if (__FEATURE_SUSPENSE__) {
           const nonHydratedAsyncRoot = locateNonHydratedAsyncRoot(instance)
@@ -1557,8 +1584,22 @@ function baseCreateRenderer(
     const effect = (instance.effect = new ReactiveEffect(componentUpdateFn))
     instance.scope.off()
 
-    const update = (instance.update = effect.run.bind(effect))
-    const job: SchedulerJob = (instance.job = effect.runIfDirty.bind(effect))
+    function _patchUpdate(checkDirty: boolean) {
+      if (!checkDirty || effect.dirty) {
+        const zova = _getValidZova(instance)
+        if (
+          zova &&
+          zova.meta.ssr.isRuntimeSsrPreHydration &&
+          !zova.meta.ssr._hydratingInstanceRecord(instance)
+        ) {
+          return
+        }
+        effect.run()
+      }
+    }
+
+    const update = (instance.update = () => _patchUpdate(false))
+    const job: SchedulerJob = (instance.job = () => _patchUpdate(true))
     job.i = instance
     job.id = instance.uid
     effect.scheduler = () => queueJob(job)

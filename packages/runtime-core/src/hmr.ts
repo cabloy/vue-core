@@ -140,6 +140,8 @@ function reload(id: string, newComp: HMRComponent): void {
       instance.ceReload((newComp as any).styles)
       dirtyInstances.delete(instance)
     } else if (instance.parent) {
+      const app = <any>instance.appContext.app
+      app.zova && app.zova.reloadDelay(true)
       // 4. Force the parent instance to re-render. This will cause all updated
       // components to be unmounted and re-mounted. Queue the update so that we
       // don't end up forcing the same parent to re-render multiple times.

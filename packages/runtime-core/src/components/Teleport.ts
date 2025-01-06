@@ -310,8 +310,8 @@ export const TeleportImpl = {
     } = vnode
 
     if (target) {
-      hostRemove(targetStart!)
-      hostRemove(targetAnchor!)
+      targetStart && hostRemove(targetStart!)
+      targetAnchor && hostRemove(targetAnchor!)
     }
 
     // an unmounted teleport should always unmount its children whether it's disabled or not

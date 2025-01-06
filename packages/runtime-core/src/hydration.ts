@@ -181,16 +181,16 @@ export function createHydrationFunctions(
           }
         } else {
           if ((node as Text).data !== vnode.children) {
-            ;(__DEV__ || __FEATURE_PROD_HYDRATION_MISMATCH_DETAILS__) &&
-              warn(
-                `Hydration text mismatch in`,
-                node.parentNode,
-                `\n  - rendered on server: ${JSON.stringify(
-                  (node as Text).data,
-                )}` +
-                  `\n  - expected on client: ${JSON.stringify(vnode.children)}`,
-              )
-            logMismatchError()
+            // ;(__DEV__ || __FEATURE_PROD_HYDRATION_MISMATCH_DETAILS__) &&
+            //   warn(
+            //     `Hydration text mismatch in`,
+            //     node.parentNode,
+            //     `\n  - rendered on server: ${JSON.stringify(
+            //       (node as Text).data,
+            //     )}` +
+            //       `\n  - expected on client: ${JSON.stringify(vnode.children)}`,
+            //   )
+            // logMismatchError()
             ;(node as Text).data = vnode.children as string
           }
           nextNode = nextSibling(node)
@@ -364,6 +364,13 @@ export function createHydrationFunctions(
     return nextNode
   }
 
+  function _getValidZova(instance: ComponentInternalInstance | null) {
+    while (instance) {
+      if ((<any>instance).zova) return (<any>instance).zova
+      instance = instance.parent
+    }
+  }
+
   const hydrateElement = (
     el: Element,
     vnode: VNode,
@@ -485,14 +492,33 @@ export function createHydrationFunctions(
           const isCustomElement = el.tagName.includes('-')
           for (const key in props) {
             // check hydration mismatch
-            if (
-              (__DEV__ || __FEATURE_PROD_HYDRATION_MISMATCH_DETAILS__) &&
-              // #11189 skip if this node has directives that have created hooks
-              // as it could have mutated the DOM in any possible way
-              !(dirs && dirs.some(d => d.dir.created)) &&
-              propHasMismatch(el, key, props[key], vnode, parentComponent)
-            ) {
-              logMismatchError()
+            let ignore
+            let clientValue = props[key]
+            const zova = _getValidZova(parentComponent)
+            if (zova) {
+              const res = zova.meta.ssr._hydratePropHasMismatch(
+                el,
+                key,
+                clientValue,
+                vnode,
+                parentComponent,
+              )
+              if (res.ignore) {
+                ignore = true
+              } else {
+                clientValue = res.clientValue
+              }
+            }
+            if (!ignore) {
+              if (
+                (__DEV__ || __FEATURE_PROD_HYDRATION_MISMATCH_DETAILS__) &&
+                // #11189 skip if this node has directives that have created hooks
+                // as it could have mutated the DOM in any possible way
+                !(dirs && dirs.some(d => d.dir.created)) &&
+                propHasMismatch(el, key, props[key], vnode, parentComponent)
+              ) {
+                logMismatchError()
+              }
             }
             if (
               (forcePatch &&

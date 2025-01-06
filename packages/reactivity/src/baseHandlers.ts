@@ -119,7 +119,7 @@ class BaseReactiveHandler implements ProxyHandler<Target> {
 
     if (isRef(res)) {
       // ref unwrapping - skip unwrap for Array + integer key.
-      return targetIsArray && isIntegerKey(key) ? res : res.value
+      return targetIsArray && isIntegerKey(key) ? res : unrefNested(res)
     }
 
     if (isObject(res)) {
@@ -131,6 +131,10 @@ class BaseReactiveHandler implements ProxyHandler<Target> {
 
     return res
   }
+}
+
+function unrefNested(ref: any): any {
+  return isRef(ref) ? unrefNested(ref.value) : ref
 }
 
 class MutableReactiveHandler extends BaseReactiveHandler {

@@ -1,5 +1,5 @@
 {
-  "name": "@vue/reactivity",
+  "name": "@cabloy/vue-reactivity",
   "version": "3.5.13",
   "description": "@vue/reactivity",
   "main": "index.js",
