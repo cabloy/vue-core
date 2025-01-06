@@ -289,6 +289,7 @@ function createConfig(format, output, plugins = []) {
     /** @type {ReadonlyArray<string>} */
     let cjsIgnores = []
     if (
+      pkg.name === '@cabloy/vue-compiler-sfc' ||
       pkg.name === '@vue/compiler-sfc' ||
       pkg.name === '@vue/compiler-sfc-canary'
     ) {
