@@ -157,8 +157,7 @@ class MutableReactiveHandler extends BaseReactiveHandler {
       }
       if (!isArray(target) && isRef(oldValue) && !isRef(value)) {
         if (isOldValueReadonly) {
-          return Reflect.set(target, key, value, receiver)
-          // return false
+          return false
         } else {
           oldValue.value = value
           return true
