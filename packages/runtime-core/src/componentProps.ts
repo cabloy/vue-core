@@ -37,7 +37,7 @@ import type { AppContext } from './apiCreateApp'
 import { createPropsDefaultThis } from './compat/props'
 import { isCompatEnabled, softAssertCompatEnabled } from './compat/compatConfig'
 import { DeprecationTypes } from './compat/compatConfig'
-import { shouldSkipAttr, shouldSkipAttrPatch } from './compat/attrsFallthrough'
+import { shouldSkipAttr } from './compat/attrsFallthrough'
 import { createInternalObject } from './internalObject'
 
 export type ComponentPropsOptions<P = Data> =
@@ -297,7 +297,6 @@ export function updateProps(
               continue
             }
           }
-          if (shouldSkipAttrPatch(key, instance)) continue
           if (value !== attrs[key]) {
             attrs[key] = value
             hasAttrsChanged = true
@@ -420,7 +419,6 @@ function setFullProps(
             continue
           }
         }
-        if (shouldSkipAttrPatch(key, instance)) continue
         if (!(key in attrs) || value !== attrs[key]) {
           attrs[key] = value
           hasAttrsChanged = true
