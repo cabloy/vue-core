@@ -25,5 +25,9 @@ export function shouldSkipAttr(
   if (key.startsWith('routerView') || key === 'registerRouteInstance') {
     return true
   }
+  // slots/controllerRef
+  if (['slots', 'controllerRef'].includes(key)) {
+    return true
+  }
   return false
 }
