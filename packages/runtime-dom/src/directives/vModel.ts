@@ -52,6 +52,7 @@ export const vModelText: ModelDirective<
   'trim' | 'number' | 'lazy'
 > = {
   created(el, { modifiers: { lazy, trim, number } }, vnode) {
+    if (!vnode.props) return
     el[assignKey] = getModelAssigner(vnode)
     const castToNumber =
       number || (vnode.props && vnode.props.type === 'number')
@@ -90,6 +91,7 @@ export const vModelText: ModelDirective<
     { value, oldValue, modifiers: { lazy, trim, number } },
     vnode,
   ) {
+    if (!vnode.props) return
     el[assignKey] = getModelAssigner(vnode)
     // avoid clearing unresolved text. #2302
     if ((el as any).composing) return
@@ -121,6 +123,7 @@ export const vModelCheckbox: ModelDirective<HTMLInputElement> = {
   // #4096 array checkboxes need to be deep traversed
   deep: true,
   created(el, _, vnode) {
+    if (!vnode.props) return
     el[assignKey] = getModelAssigner(vnode)
     addEventListener(el, 'change', () => {
       const modelValue = (el as any)._modelValue
@@ -153,6 +156,7 @@ export const vModelCheckbox: ModelDirective<HTMLInputElement> = {
   // set initial checked on mount to wait for true-value/false-value
   mounted: setChecked,
   beforeUpdate(el, binding, vnode) {
+    if (!vnode.props) return
     el[assignKey] = getModelAssigner(vnode)
     setChecked(el, binding, vnode)
   },
@@ -185,6 +189,7 @@ function setChecked(
 
 export const vModelRadio: ModelDirective<HTMLInputElement> = {
   created(el, { value }, vnode) {
+    if (!vnode.props) return
     el.checked = looseEqual(value, vnode.props!.value)
     el[assignKey] = getModelAssigner(vnode)
     addEventListener(el, 'change', () => {
@@ -192,6 +197,7 @@ export const vModelRadio: ModelDirective<HTMLInputElement> = {
     })
   },
   beforeUpdate(el, { value, oldValue }, vnode) {
+    if (!vnode.props) return
     el[assignKey] = getModelAssigner(vnode)
     if (value !== oldValue) {
       el.checked = looseEqual(value, vnode.props!.value)
@@ -203,6 +209,7 @@ export const vModelSelect: ModelDirective<HTMLSelectElement, 'number'> = {
   // <select multiple> value need to be deep traversed
   deep: true,
   created(el, { value, modifiers: { number } }, vnode) {
+    if (!vnode.props) return
     const isSetModel = isSet(value)
     addEventListener(el, 'change', () => {
       const selectedVal = Array.prototype.filter
@@ -230,6 +237,7 @@ export const vModelSelect: ModelDirective<HTMLSelectElement, 'number'> = {
     setSelected(el, value)
   },
   beforeUpdate(el, _binding, vnode) {
+    if (!vnode.props) return
     el[assignKey] = getModelAssigner(vnode)
   },
   updated(el, { value }) {
