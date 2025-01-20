@@ -765,7 +765,11 @@ export const setCurrentInstance = (instance: ComponentInternalInstance) => {
   internalSetCurrentInstance(instance)
   instance.scope.on()
   return (): void => {
-    instance.scope.off()
+    if (prev) {
+      prev.scope.on()
+    } else {
+      instance.scope.off()
+    }
     internalSetCurrentInstance(prev)
   }
 }
