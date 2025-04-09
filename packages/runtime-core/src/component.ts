@@ -413,7 +413,7 @@ export interface ComponentInternalInstance {
    * resolved inheritAttrs options
    * @internal
    */
-  inheritAttrs?: boolean
+  inheritAttrs?: boolean | string[]
   /**
    * Custom Element instance (if component is created by defineCustomElement)
    * @internal
