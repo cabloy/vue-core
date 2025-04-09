@@ -357,7 +357,7 @@ const filterModelListeners = (attrs: Data, props: NormalizedProps): Data => {
 
 const filterZovaAttrs = (
   attrs: Data,
-  inheritAttrs?: boolean | string[],
+  inheritAttrs: boolean | string[] = true,
 ): Data => {
   const res: Data = {}
   if (!inheritAttrs) return res
