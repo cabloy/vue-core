@@ -155,7 +155,7 @@ export interface ComponentOptionsBase<
   // NOTE: extending both Directives and Record<string, Directive> allows objects to be forced
   // to be of type Directive, while still inferring Directives generic
   directives?: Directives & Record<string, Directive>
-  inheritAttrs?: boolean
+  inheritAttrs?: boolean | string[]
   emits?: (E | EE[]) & ThisType<void>
   slots?: S
   expose?: Exposed[]

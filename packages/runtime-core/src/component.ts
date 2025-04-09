@@ -226,7 +226,7 @@ export interface FunctionalComponent<
   props?: ComponentPropsOptions<P>
   emits?: EE | (keyof EE)[]
   slots?: IfAny<S, Slots, SlotsType<S>>
-  inheritAttrs?: boolean
+  inheritAttrs?: boolean | string[]
   displayName?: string
   compatConfig?: CompatConfig
 }
