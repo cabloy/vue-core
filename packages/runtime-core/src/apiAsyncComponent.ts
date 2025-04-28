@@ -142,10 +142,10 @@ export function defineAsyncComponent<
         doHydrate()
       } else {
         const zova = _getValidZova(instance)
-        zova.meta.ssr._hydratingInc()
+        zova.meta.$ssr._hydratingInc()
         load().then(() => {
           !instance.isUnmounted && doHydrate()
-          zova.meta.ssr._hydratingDec()
+          zova.meta.$ssr._hydratingDec()
         })
       }
     },

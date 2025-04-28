@@ -496,7 +496,7 @@ export function createHydrationFunctions(
             let clientValue = props[key]
             const zova = _getValidZova(parentComponent)
             if (zova) {
-              const res = zova.meta.ssr._hydratePropHasMismatch(
+              const res = zova.meta.$ssr._hydratePropHasMismatch(
                 el,
                 key,
                 clientValue,

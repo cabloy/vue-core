@@ -1317,7 +1317,7 @@ function baseCreateRenderer(
 
         const _zova = _getValidZova(instance)
         const _maybeAllowHydrate =
-          !_zova || _zova.meta.ssr.isRuntimeSsrPreHydration
+          !_zova || _zova.meta.$ssr.isRuntimeSsrPreHydration
         if (el && hydrateNode && _maybeAllowHydrate) {
           // vnode has adopted host node - perform hydration instead of mount.
           const hydrateSubTree = () => {
@@ -1355,10 +1355,10 @@ function baseCreateRenderer(
           } else {
             const zova = (<any>instance).zova
             if (zova) {
-              zova.meta.ssr._hydratingInc()
+              zova.meta.$ssr._hydratingInc()
               zova.meta.state.inited.wait().then(() => {
                 !instance.isUnmounted && hydrateSubTree()
-                zova.meta.ssr._hydratingDec()
+                zova.meta.$ssr._hydratingDec()
               })
             } else {
               hydrateSubTree()
@@ -1451,7 +1451,7 @@ function baseCreateRenderer(
         let { next, bu, u, parent, vnode } = instance
 
         const zova = (<any>instance).zova
-        if (zova && zova.meta.ssr.isRuntimeSsrPreHydration) {
+        if (zova && zova.meta.$ssr.isRuntimeSsrPreHydration) {
           return
         }
         if (!instance.subTree) {
@@ -1589,8 +1589,8 @@ function baseCreateRenderer(
         const zova = _getValidZova(instance)
         if (
           zova &&
-          zova.meta.ssr.isRuntimeSsrPreHydration &&
-          !zova.meta.ssr._hydratingInstanceRecord(instance)
+          zova.meta.$ssr.isRuntimeSsrPreHydration &&
+          !zova.meta.$ssr._hydratingInstanceRecord(instance)
         ) {
           return
         }
