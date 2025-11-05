@@ -366,11 +366,11 @@ const filterZovaAttrs = (
       if (inheritAttrs === true) {
         res[key] = attrs[key]
       } else if (inheritAttrs === 'auto') {
-        if (
-          ['class', 'style'].includes(key) ||
-          (key.startsWith('on') && key[2] >= 'A' && key[2] <= 'Z')
-        ) {
+        if (['class', 'style'].includes(key)) {
           res[key] = attrs[key]
+        } else if (key.startsWith('nativeOn')) {
+          const key2 = 'on' + key.slice('nativeOn'.length)
+          res[key2] = attrs[key]
         }
       } else if (inheritAttrs.includes(key)) {
         res[key] = attrs[key]
