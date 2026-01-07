@@ -694,8 +694,11 @@ export function createComponentInstance(
   } else {
     instance.ctx = { _: instance }
   }
-  if ((vnode as any).zovaHostProviders) {
-    ;(instance as any).zovaHostProviders = (vnode as any).zovaHostProviders
+  const zovaHostProviders =
+    (vnode as any).zovaHostProviders ??
+    (parent && (parent as any).zovaHostProviders)
+  if (zovaHostProviders) {
+    ;(instance as any).zovaHostProviders = zovaHostProviders
   }
   instance.root = parent ? parent.root : instance
   instance.emit = emit.bind(null, instance)
