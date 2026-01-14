@@ -4,7 +4,7 @@ import {
   type ConcreteComponent,
   type SetupContext,
   currentInstance,
-  getComponentName,
+  // getComponentName,
   getCurrentInstance,
 } from '../component'
 import {
@@ -45,7 +45,7 @@ import {
 import { setTransitionHooks } from './BaseTransition'
 import type { ComponentRenderContext } from '../componentPublicInstance'
 import { devtoolsComponentAdded } from '../devtools'
-import { isAsyncWrapper } from '../apiAsyncComponent'
+// import { isAsyncWrapper } from '../apiAsyncComponent'
 import { isSuspense } from './Suspense'
 import { LifecycleHooks } from '../enums'
 
@@ -197,7 +197,8 @@ const KeepAliveImpl: ComponentOptions = {
 
     function pruneCache(filter: (name: string) => boolean) {
       cache.forEach((vnode, key) => {
-        const name = getComponentName(vnode.type as ConcreteComponent)
+        // const name = getComponentName(vnode.type as ConcreteComponent)
+        const name = vnode.key as string
         if (name && !filter(name)) {
           pruneCacheEntry(key)
         }
@@ -298,11 +299,12 @@ const KeepAliveImpl: ComponentOptions = {
 
       // for async components, name check should be based in its loaded
       // inner component if available
-      const name = getComponentName(
-        isAsyncWrapper(vnode)
-          ? (vnode.type as ComponentOptions).__asyncResolved || {}
-          : comp,
-      )
+      // const name = getComponentName(
+      //   isAsyncWrapper(vnode)
+      //     ? (vnode.type as ComponentOptions).__asyncResolved || {}
+      //     : comp,
+      // )
+      const name = vnode.key as string
 
       const { include, exclude, max } = props
 
