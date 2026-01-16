@@ -1242,10 +1242,11 @@ function baseCreateRenderer(
   }
 
   const updateComponent = (n1: VNode, n2: VNode, optimized: boolean) => {
-    const instance = (n2.component = n1.component)!
-    if (instance) {
-      ;(instance as any).zovaHostProviders = (n2 as any).zovaHostProviders
+    if (n2.component !== n1.component) {
+      // no keep alive cache
+      ;(n1.component as any).zovaHostProviders = (n2 as any).zovaHostProviders
     }
+    const instance = (n2.component = n1.component)!
     if (shouldUpdateComponent(n1, n2, optimized)) {
       if (
         __FEATURE_SUSPENSE__ &&
