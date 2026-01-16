@@ -315,11 +315,6 @@ const KeepAliveImpl: ComponentOptions = {
         // #11717
         vnode.shapeFlag &= ~ShapeFlags.COMPONENT_SHOULD_KEEP_ALIVE
         current = vnode
-        if (current.component) {
-          ;(current.component as any).zovaHostProviders = (
-            current as any
-          ).zovaHostProviders
-        }
         return rawVNode
       }
 
@@ -344,6 +339,9 @@ const KeepAliveImpl: ComponentOptions = {
         // copy over mounted state
         vnode.el = cachedVNode.el
         vnode.component = cachedVNode.component
+        ;(vnode.component as any).zovaHostProviders = (
+          vnode as any
+        ).zovaHostProviders
         if (vnode.transition) {
           // recursively update transition hooks on subTree
           setTransitionHooks(vnode, vnode.transition!)
@@ -364,11 +362,6 @@ const KeepAliveImpl: ComponentOptions = {
       vnode.shapeFlag |= ShapeFlags.COMPONENT_SHOULD_KEEP_ALIVE
 
       current = vnode
-      if (current.component) {
-        ;(current.component as any).zovaHostProviders = (
-          current as any
-        ).zovaHostProviders
-      }
       return isSuspense(rawVNode.type) ? rawVNode : vnode
     }
   },
