@@ -315,9 +315,11 @@ const KeepAliveImpl: ComponentOptions = {
         // #11717
         vnode.shapeFlag &= ~ShapeFlags.COMPONENT_SHOULD_KEEP_ALIVE
         current = vnode
-        ;(current.component as any).zovaHostProviders = (
-          current as any
-        ).zovaHostProviders
+        if (current.component) {
+          ;(current.component as any).zovaHostProviders = (
+            current as any
+          ).zovaHostProviders
+        }
         return rawVNode
       }
 
@@ -362,9 +364,11 @@ const KeepAliveImpl: ComponentOptions = {
       vnode.shapeFlag |= ShapeFlags.COMPONENT_SHOULD_KEEP_ALIVE
 
       current = vnode
-      ;(current.component as any).zovaHostProviders = (
-        current as any
-      ).zovaHostProviders
+      if (current.component) {
+        ;(current.component as any).zovaHostProviders = (
+          current as any
+        ).zovaHostProviders
+      }
       return isSuspense(rawVNode.type) ? rawVNode : vnode
     }
   },
