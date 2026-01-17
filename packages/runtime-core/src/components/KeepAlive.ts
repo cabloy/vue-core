@@ -339,9 +339,14 @@ const KeepAliveImpl: ComponentOptions = {
         // copy over mounted state
         vnode.el = cachedVNode.el
         vnode.component = cachedVNode.component
-        ;(vnode.component as any).zovaHostProviders = (
-          vnode as any
-        ).zovaHostProviders
+        if (
+          (vnode.component as any).zovaHostProviders !==
+          (vnode as any).zovaHostProviders
+        ) {
+          ;(vnode.component as any).zovaHostProviders = (
+            vnode as any
+          ).zovaHostProviders
+        }
         if (vnode.transition) {
           // recursively update transition hooks on subTree
           setTransitionHooks(vnode, vnode.transition!)
