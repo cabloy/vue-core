@@ -107,11 +107,11 @@ export function setRef(
   }
 
   if (isFunction(ref)) {
-    const isBehavior =
+    const ignore =
       vnode.shapeFlag & 4 &&
       vnode.component &&
       vnode.component.type.inheritAttrs === false
-    if (!isBehavior) {
+    if (!ignore) {
       callWithErrorHandling(ref, owner, ErrorCodes.FUNCTION_REF, [value, refs])
     }
   } else {
