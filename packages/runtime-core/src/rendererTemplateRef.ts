@@ -110,7 +110,7 @@ export function setRef(
     const isBehavior =
       vnode.shapeFlag & 4 &&
       vnode.component &&
-      vnode.component.type.name === 'behavior'
+      vnode.component.type.inheritAttrs === false
     if (!isBehavior) {
       callWithErrorHandling(ref, owner, ErrorCodes.FUNCTION_REF, [value, refs])
     }
