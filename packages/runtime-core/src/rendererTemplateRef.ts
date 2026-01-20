@@ -107,7 +107,13 @@ export function setRef(
   }
 
   if (isFunction(ref)) {
-    callWithErrorHandling(ref, owner, ErrorCodes.FUNCTION_REF, [value, refs])
+    const isBehavior =
+      vnode.shapeFlag & 4 &&
+      vnode.component &&
+      vnode.component.type.name === 'behavior'
+    if (!isBehavior) {
+      callWithErrorHandling(ref, owner, ErrorCodes.FUNCTION_REF, [value, refs])
+    }
   } else {
     const _isString = isString(ref)
     const _isRef = isRef(ref)
