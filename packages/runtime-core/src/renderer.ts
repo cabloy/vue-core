@@ -1242,7 +1242,6 @@ function baseCreateRenderer(
   }
 
   const updateComponent = (n1: VNode, n2: VNode, optimized: boolean) => {
-    let needUpdate
     if (n2.component !== n1.component) {
       // no keep alive cache
       if (
@@ -1250,11 +1249,10 @@ function baseCreateRenderer(
         (n2 as any).zovaHostProviders
       ) {
         ;(n1.component as any).zovaHostProviders = (n2 as any).zovaHostProviders
-        needUpdate = true
       }
     }
     const instance = (n2.component = n1.component)!
-    if (needUpdate || shouldUpdateComponent(n1, n2, optimized)) {
+    if (shouldUpdateComponent(n1, n2, optimized)) {
       if (
         __FEATURE_SUSPENSE__ &&
         instance.asyncDep &&
@@ -1606,7 +1604,7 @@ function baseCreateRenderer(
           return
         }
         if (zova && (instance as any).zovaHostProviders) {
-          zova._zovaHostProviders((instance as any).zovaHostProviders)
+          zova._zovaHostProviders()
         }
         effect.run()
       }
