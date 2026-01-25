@@ -1606,7 +1606,7 @@ function baseCreateRenderer(
           return
         }
         if (zova && (instance as any).zovaHostProviders) {
-          zova._zovaHostProviders()
+          zova._zovaHostProviders((instance as any).zovaHostProviders)
         }
         effect.run()
       }
