@@ -694,9 +694,7 @@ export function createComponentInstance(
   } else {
     instance.ctx = { _: instance }
   }
-  const zovaHostProviders =
-    (vnode as any).zovaHostProviders ??
-    (parent && (parent as any).zovaHostProviders)
+  const zovaHostProviders = (vnode as any).zovaHostProviders
   if (zovaHostProviders) {
     ;(instance as any).zovaHostProviders = zovaHostProviders
   }

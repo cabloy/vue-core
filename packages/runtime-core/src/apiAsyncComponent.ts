@@ -256,10 +256,5 @@ function createInnerComp(
   // and remove it from the async wrapper
   vnode.ce = ce
   delete parent.vnode.ce
-  if (
-    (vnode as any).zovaHostProviders !== (parent.vnode as any).zovaHostProviders
-  ) {
-    ;(vnode as any).zovaHostProviders = (parent.vnode as any).zovaHostProviders
-  }
   return vnode
 }

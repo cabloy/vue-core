@@ -325,6 +325,19 @@ export function createHydrationRenderer(
   return baseCreateRenderer(options, createHydrationFunctions)
 }
 
+function _updateZovaHostProviders(instance: any, zovaHostProviders: any) {
+  let zova = instance.zova
+  if (!zova && instance.type.name === 'AsyncComponentWrapper') {
+    zova =
+      instance.subTree &&
+      instance.subTree.component &&
+      instance.subTree.component.zova
+  }
+  if (zova) {
+    zova._zovaHostProvidersUpdate(zovaHostProviders)
+  }
+}
+
 // overload 1: no hydration
 function baseCreateRenderer<
   HostNode = RendererNode,
@@ -1249,6 +1262,7 @@ function baseCreateRenderer(
         (n2 as any).zovaHostProviders
       ) {
         ;(n1.component as any).zovaHostProviders = (n2 as any).zovaHostProviders
+        _updateZovaHostProviders(n1.component, (n2 as any).zovaHostProviders)
       }
     }
     const instance = (n2.component = n1.component)!
@@ -1602,9 +1616,6 @@ function baseCreateRenderer(
           !zova.meta.$ssr._hydratingInstanceRecord(instance)
         ) {
           return
-        }
-        if (zova && (instance as any).zovaHostProviders) {
-          zova._zovaHostProviders()
         }
         effect.run()
       }

@@ -49,6 +49,19 @@ import { devtoolsComponentAdded } from '../devtools'
 import { isSuspense } from './Suspense'
 import { LifecycleHooks } from '../enums'
 
+function _updateZovaHostProviders(instance: any, zovaHostProviders: any) {
+  let zova = instance.zova
+  if (!zova && instance.type.name === 'AsyncComponentWrapper') {
+    zova =
+      instance.subTree &&
+      instance.subTree.component &&
+      instance.subTree.component.zova
+  }
+  if (zova) {
+    zova._zovaHostProvidersUpdate(zovaHostProviders)
+  }
+}
+
 type MatchPattern = string | RegExp | (string | RegExp)[]
 
 export interface KeepAliveProps {
@@ -346,6 +359,10 @@ const KeepAliveImpl: ComponentOptions = {
           ;(vnode.component as any).zovaHostProviders = (
             vnode as any
           ).zovaHostProviders
+          _updateZovaHostProviders(
+            vnode.component,
+            (vnode as any).zovaHostProviders,
+          )
         }
         if (vnode.transition) {
           // recursively update transition hooks on subTree
