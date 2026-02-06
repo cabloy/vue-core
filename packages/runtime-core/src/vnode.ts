@@ -535,7 +535,7 @@ function createBaseVNode(
   }
 
   // v-slots
-  if ((props as any)['v-slots']) {
+  if (props && (props as any)['v-slots']) {
     if (!vnode.children) vnode.children = { _ctx: currentRenderingInstance }
     if (typeof vnode.children === 'object') {
       vnode.children = Object.assign(
