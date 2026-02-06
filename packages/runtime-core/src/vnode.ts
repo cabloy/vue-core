@@ -468,6 +468,8 @@ function createBaseVNode(
     if (typeof children === 'object') {
       children = Object.assign({}, (props as any)['v-slots'], children)
     }
+    props = Object.assign({}, props)
+    delete (props as any)['v-slots']
   }
 
   const vnode = {

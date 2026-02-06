@@ -152,8 +152,8 @@ export function renderComponentRoot(
     ;[root, setRoot] = getChildRoot(result)
   }
 
-  fallthroughAttrs = filterZovaAttrs(fallthroughAttrs, inheritAttrs as any)
   if (fallthroughAttrs && inheritAttrs !== false) {
+    fallthroughAttrs = filterZovaAttrs(fallthroughAttrs, inheritAttrs as any)
     const keys = Object.keys(fallthroughAttrs)
     const { shapeFlag } = root
     if (keys.length) {
@@ -356,14 +356,12 @@ const filterModelListeners = (attrs: Data, props: NormalizedProps): Data => {
 }
 
 const filterZovaAttrs = (
-  attrs: Data | undefined,
+  attrs: Data,
   inheritAttrs: boolean | string[] | 'auto' = true,
-): Data | undefined => {
-  if (!attrs) return attrs
+): Data => {
   const res: Data = {}
   if (!inheritAttrs) return res
   for (const key in attrs) {
-    if (key.startsWith('v-')) continue // for example: v-slots
     if (inheritAttrs) {
       if (inheritAttrs === true) {
         if (key.startsWith('nativeOn')) {
