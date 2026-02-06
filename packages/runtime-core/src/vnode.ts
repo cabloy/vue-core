@@ -461,6 +461,15 @@ function createBaseVNode(
   isBlockNode = false,
   needFullChildrenNormalization = false,
 ): VNode {
+  // v-slots
+  if (props && (props as any)['v-slots']) {
+    if (!children) children = {}
+    if (isFunction(children)) children = { default: children }
+    if (children === 'object') {
+      children = Object.assign({}, (props as any)['v-slots'], children)
+    }
+  }
+
   const vnode = {
     __v_isVNode: true,
     __v_skip: true,
@@ -532,18 +541,6 @@ function createBaseVNode(
   if (__COMPAT__) {
     convertLegacyVModelProps(vnode)
     defineLegacyVNodeProperties(vnode)
-  }
-
-  // v-slots
-  if (props && (props as any)['v-slots']) {
-    if (!vnode.children) vnode.children = { _ctx: currentRenderingInstance }
-    if (typeof vnode.children === 'object') {
-      vnode.children = Object.assign(
-        {},
-        (props as any)['v-slots'],
-        vnode.children,
-      )
-    }
   }
 
   return vnode
