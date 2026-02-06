@@ -534,6 +534,18 @@ function createBaseVNode(
     defineLegacyVNodeProperties(vnode)
   }
 
+  // v-slots
+  if ((props as any)['v-slots']) {
+    if (!vnode.children) vnode.children = { _ctx: currentRenderingInstance }
+    if (typeof vnode.children === 'object') {
+      vnode.children = Object.assign(
+        {},
+        (props as any)['v-slots'],
+        vnode.children,
+      )
+    }
+  }
+
   return vnode
 }
 
