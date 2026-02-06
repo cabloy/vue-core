@@ -362,6 +362,7 @@ const filterZovaAttrs = (
   const res: Data = {}
   if (!inheritAttrs) return res
   for (const key in attrs) {
+    if (key.startsWith('v-')) continue // for example: v-slots
     if (inheritAttrs) {
       if (inheritAttrs === true) {
         if (key.startsWith('nativeOn')) {
