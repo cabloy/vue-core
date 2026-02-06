@@ -465,7 +465,7 @@ function createBaseVNode(
   if (props && (props as any)['v-slots']) {
     if (!children) children = {}
     if (isFunction(children)) children = { default: children }
-    if (children === 'object') {
+    if (typeof children === 'object') {
       children = Object.assign({}, (props as any)['v-slots'], children)
     }
   }
