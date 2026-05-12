@@ -399,7 +399,15 @@ export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
       return false
     }
   }
-  return n1.type === n2.type && n1.key === n2.key
+  const type1 =
+    typeof n1.type === 'function' && (n1.type as any)['zova-jsx:component']
+      ? (n1.type as any)['zova-jsx:component']
+      : n1.type
+  const type2 =
+    typeof n2.type === 'function' && (n2.type as any)['zova-jsx:component']
+      ? (n2.type as any)['zova-jsx:component']
+      : n2.type
+  return type1 === type2 && n1.key === n2.key
 }
 
 let vnodeArgsTransformer:
