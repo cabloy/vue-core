@@ -397,6 +397,10 @@ function baseCreateRenderer(
     if (n1 === n2) {
       return
     }
+    // zhennann
+    if (!container) {
+      return
+    }
 
     // patching & not same type, unmount old tree
     if (n1 && !isSameVNodeType(n1, n2)) {
