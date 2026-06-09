@@ -459,13 +459,14 @@ export function createAppAPI<HostElement>(
       },
 
       runWithContext(fn) {
-        const lastApp = currentApp
-        currentApp = app
-        try {
-          return fn()
-        } finally {
-          currentApp = lastApp
-        }
+        return withCurrentAppScope(app, fn)
+        // const lastApp = currentApp
+        // currentApp = app
+        // try {
+        //   return fn()
+        // } finally {
+        //   currentApp = lastApp
+        // }
       },
     })
 
@@ -482,3 +483,16 @@ export function createAppAPI<HostElement>(
  * `app.runWithContext()`.
  */
 export let currentApp: App<unknown> | null = null
+
+const withCurrentAppScope = (app: App, fn: any) => {
+  const prev = currentApp
+  if (prev === app) {
+    return fn()
+  }
+  currentApp = app
+  try {
+    return fn()
+  } finally {
+    currentApp = prev
+  }
+}
