@@ -792,6 +792,31 @@ export const withCurrentInstanceScope = (
   }
 }
 
+export const withCurrentInstanceScopeSSR = (
+  instance: ComponentInternalInstance,
+  fn: any,
+): any => {
+  const prev = currentInstance
+  const prevSSR = isInSSRComponentSetup
+  setInSSRSetupState(true)
+  if (prev === instance) {
+    try {
+      return fn()
+    } finally {
+      setInSSRSetupState(prevSSR)
+    }
+  }
+  internalSetCurrentInstance(instance)
+  instance.scope.on()
+  try {
+    return fn()
+  } finally {
+    instance.scope.off()
+    internalSetCurrentInstance(prev)
+    setInSSRSetupState(prevSSR)
+  }
+}
+
 export const unsetCurrentInstance = (): void => {
   currentInstance && currentInstance.scope.off()
   internalSetCurrentInstance(null)

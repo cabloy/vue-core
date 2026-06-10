@@ -107,6 +107,7 @@ export {
   getCurrentInstance,
   setCurrentInstance,
   withCurrentInstanceScope,
+  withCurrentInstanceScopeSSR,
 } from './component'
 
 // For raw render function users
