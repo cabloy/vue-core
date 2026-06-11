@@ -780,14 +780,12 @@ export const withCurrentInstanceScope = (
 ): any => {
   const prev = currentInstance
   if (prev === instance) {
-    return fn()
+    return instance.scope.run(fn)
   }
   internalSetCurrentInstance(instance)
-  instance.scope.on()
   try {
-    return fn()
+    return instance.scope.run(fn)
   } finally {
-    instance.scope.off()
     internalSetCurrentInstance(prev)
   }
 }
@@ -801,17 +799,15 @@ export const withCurrentInstanceScopeSSR = (
   setInSSRSetupState(true)
   if (prev === instance) {
     try {
-      return fn()
+      return instance.scope.run(fn)
     } finally {
       setInSSRSetupState(prevSSR)
     }
   }
   internalSetCurrentInstance(instance)
-  instance.scope.on()
   try {
-    return fn()
+    return instance.scope.run(fn)
   } finally {
-    instance.scope.off()
     internalSetCurrentInstance(prev)
     setInSSRSetupState(prevSSR)
   }
